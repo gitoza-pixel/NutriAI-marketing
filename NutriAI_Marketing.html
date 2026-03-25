@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriAI — Eat Smarter. Live Longer.</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g1:#1B5E20;--g2:#2E7D32;--g3:#43A047;--g4:#81C784;--g5:#C8E6C9;--g6:#E8F5E9;
+  --dark:#1A2E1A;--mid:#4A6741;--light:#7A9B77;--white:#FFFFFF;--cream:#FAFDF7;
+  --gold:#F59E0B;--coral:#FF7043;--blue:#1E88E5;--purple:#7B1FA2;--pink:#D81B60;--teal:#00897B;
+  --r:18px;--rs:12px;--sh:0 4px 20px rgba(27,94,32,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Quicksand',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;overflow-x:hidden}
+
+.bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg-avo{position:absolute;opacity:.035;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(110vh) rotate(0)}100%{transform:translateY(-150px) rotate(360deg)}}
+
+.app{position:relative;z-index:1;max-width:440px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+
+/* HEADER */
+.hdr{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--g5);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(27,94,32,.08)}
+.logo-row{display:flex;align-items:center;gap:8px}
+.logo-txt{font-family:'Nunito',sans-serif;font-size:21px;font-weight:900;color:var(--g1)}
+.logo-sub{font-size:10px;color:var(--light);font-weight:600;margin-top:-2px}
+.lang-row{display:flex;gap:5px}
+.lb{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid var(--g5);background:var(--white);cursor:pointer;color:var(--mid);transition:all .15s}
+.lb.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+
+/* NAV */
+.nav{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--g5);display:flex;overflow-x:auto;padding:0 4px;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nt{padding:11px 11px;font-size:11px;font-weight:700;color:var(--light);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.nt.on{color:var(--g1);border-bottom-color:var(--g1)}
+
+/* SCREENS */
+.scr{display:none;padding:16px 14px 50px;flex:1}
+.scr.on{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:rgba(255,255,255,.97);border-radius:var(--r);border:1.5px solid var(--g5);padding:16px;box-shadow:var(--sh);margin-bottom:13px}
+.card-accent{border-left:4px solid var(--g2);border-radius:0 var(--r) var(--r) 0}
+
+/* HERO */
+.hero{text-align:center;padding:20px 0 10px}
+.hero-badge{display:inline-block;background:var(--g6);border:1.5px solid var(--g4);color:var(--g1);font-size:11px;font-weight:800;padding:5px 14px;border-radius:20px;margin-bottom:12px;letter-spacing:.4px}
+.hero h1{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--dark);line-height:1.25;margin-bottom:8px}
+.hero p{font-size:13px;color:var(--mid);line-height:1.65;margin-bottom:16px;font-weight:500}
+.hero-btns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn{padding:13px 20px;border-radius:var(--rs);background:linear-gradient(135deg,var(--g2),var(--g1));color:#fff;font-size:14px;font-weight:800;font-family:'Nunito',sans-serif;border:none;cursor:pointer;transition:all .2s;box-shadow:0 5px 18px rgba(27,94,32,.28)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(27,94,32,.38)}
+.btn-out{background:transparent;color:var(--g1);border:2px solid var(--g1);box-shadow:none}
+.btn-out:hover{background:var(--g6);transform:none;box-shadow:none}
+.btn-sm{padding:9px 16px;font-size:13px}
+.btn-full{width:100%;display:block;text-align:center;margin-top:10px}
+
+/* SECTION TITLES */
+.sec-title{font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;color:var(--dark);margin-bottom:4px}
+.sec-sub{font-size:12px;color:var(--mid);margin-bottom:14px;font-weight:500;line-height:1.5}
+
+/* FEATURE PILLS */
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.feat-card{background:#fff;border-radius:14px;border:1.5px solid var(--g5);padding:13px;box-shadow:0 2px 10px rgba(27,94,32,.06);transition:all .2s}
+.feat-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(27,94,32,.12)}
+.feat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.feat-name{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:3px}
+.feat-desc{font-size:11px;color:var(--mid);line-height:1.5;font-weight:500}
+
+/* BADGE */
+.bdg{display:inline-block;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;margin-bottom:7px}
+.bdg-g{background:var(--g6);color:var(--g1)}
+.bdg-b{background:#E3F2FD;color:#1565C0}
+.bdg-p{background:#F3E5F5;color:#6A1B9A}
+.bdg-pk{background:#FCE4EC;color:#880E4F}
+.bdg-a{background:#FFF8E1;color:#E65100}
+.bdg-t{background:#E0F2F1;color:#00695C}
+
+/* PRICING */
+.plan-grid{display:flex;flex-direction:column;gap:11px;margin-bottom:14px}
+.plan{background:#fff;border-radius:var(--r);border:1.5px solid var(--g5);padding:16px;position:relative;box-shadow:var(--sh)}
+.plan.popular{border:2px solid var(--g2)}
+.pop-tag{position:absolute;top:-1px;right:16px;background:var(--g2);color:#fff;font-size:10px;font-weight:800;padding:4px 12px;border-radius:0 0 10px 10px;letter-spacing:.4px}
+.plan-name{font-size:12px;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.plan-price{font-family:'Nunito',sans-serif;font-size:30px;font-weight:900;color:var(--dark)}
+.plan-price span{font-size:13px;font-weight:500;color:var(--light)}
+.plan-tagline{font-size:12px;color:var(--mid);margin:5px 0 12px;font-weight:500}
+.feat-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.feat-list li{font-size:12px;color:var(--mid);display:flex;align-items:flex-start;gap:7px;font-weight:500;line-height:1.5}
+.feat-list li .ck{width:16px;height:16px;border-radius:50%;background:var(--g6);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.feat-list li .lk{width:16px;height:16px;border-radius:50%;background:#F5F5F5;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:#bbb;font-size:9px}
+.trial-strip{background:var(--g6);border:1.5px solid var(--g4);border-radius:var(--rs);padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.trial-strip p{font-size:12px;color:var(--g1);font-weight:700;line-height:1.5}
+
+/* SPECIALIST */
+.spec-card{background:#fff;border-radius:14px;border:1.5px solid var(--g5);padding:13px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 2px 8px rgba(27,94,32,.05)}
+.spec-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.spec-name{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px}
+.spec-role{font-size:11px;color:var(--mid);margin-bottom:7px;font-weight:500}
+.tag-row{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px}
+
+/* PERSONAS */
+.persona-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:13px;scrollbar-width:none;padding-bottom:3px}
+.persona-tabs::-webkit-scrollbar{display:none}
+.ptab{padding:7px 13px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid var(--g5);background:#fff;cursor:pointer;color:var(--mid);white-space:nowrap;flex-shrink:0;transition:all .18s}
+.ptab.on{background:var(--g1);color:#fff;border-color:var(--g1);box-shadow:0 3px 10px rgba(27,94,32,.22)}
+.persona-card{background:#fff;border-radius:var(--r);border:1.5px solid var(--g5);padding:16px;box-shadow:var(--sh)}
+.p-top{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.p-avatar{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+.p-name{font-size:15px;font-weight:800;color:var(--dark)}
+.p-tag{font-size:11px;color:var(--mid);font-weight:500}
+.p-row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-start}
+.p-label{font-size:11px;font-weight:700;color:var(--light);min-width:42px;padding-top:2px;flex-shrink:0}
+.p-val{font-size:12px;color:var(--dark);line-height:1.5;font-weight:500}
+.pain-tag{background:#FFEBEE;color:#B71C1C;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;display:inline-block}
+.goal-tag{background:var(--g6);color:var(--g1);font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;display:inline-block}
+.hook-box{background:var(--g6);border-left:3px solid var(--g2);border-radius:0 10px 10px 0;padding:10px 13px;margin-top:10px}
+.hook-box p{font-size:12px;color:var(--g1);font-weight:700;font-style:italic;line-height:1.5}
+
+/* SKIN HAIR */
+.nutrient-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.nutrient-card{background:#fff;border-radius:var(--rs);border:1.5px solid var(--g5);padding:12px;box-shadow:0 2px 8px rgba(27,94,32,.05)}
+.nut-icon{font-size:18px;margin-bottom:5px}
+.nut-name{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:2px}
+.nut-effect{font-size:11px;color:var(--mid);font-weight:500;line-height:1.4}
+.nut-source{font-size:10px;color:var(--g1);font-weight:700;margin-top:4px}
+.skin-tabs{display:flex;gap:6px;margin-bottom:12px}
+.stab{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--g5);background:#fff;cursor:pointer;color:var(--mid);transition:all .18s;flex:1;text-align:center}
+.stab.on{color:#fff;border-color:transparent}
+
+/* CHATBOT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 135px);min-height:500px}
+.chat-header{display:flex;align-items:center;gap:10px;padding:12px 0 10px;border-bottom:1.5px solid var(--g5);margin-bottom:10px}
+.chat-avo{width:40px;height:40px;border-radius:50%;background:var(--g6);border:2px solid var(--g4);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.chat-avo svg{width:36px;height:36px}
+.chat-online{font-size:13px;font-weight:700;color:var(--dark)}
+.chat-status-dot{width:8px;height:8px;border-radius:50%;background:#4CAF50;display:inline-block;margin-right:4px}
+.chat-sub{font-size:11px;color:var(--mid);font-weight:500}
+.chat-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0;scroll-behavior:smooth}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--g5);border-radius:3px}
+.cmsg{display:flex;gap:9px;align-items:flex-end;animation:fadeUp .2s ease}
+.cmsg.user{flex-direction:row-reverse}
+.c-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--g6);border:1.5px solid var(--g5)}
+.c-av svg{width:30px;height:30px}
+.c-bubble{max-width:82%;padding:11px 14px;border-radius:18px;font-size:13px;line-height:1.65;font-weight:500;word-break:break-word}
+.cmsg.avo .c-bubble{background:linear-gradient(135deg,var(--g6),#F1F8E9);border:1.5px solid var(--g5);color:var(--dark);border-bottom-left-radius:4px}
+.cmsg.user .c-bubble{background:linear-gradient(135deg,var(--g2),var(--g1));color:#fff;border-bottom-right-radius:4px;box-shadow:0 4px 14px rgba(27,94,32,.25)}
+.typing-dots{display:flex;gap:4px;align-items:center;padding:2px 4px}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--g3);animation:tdot 1.3s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes tdot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.chat-input-area{padding:10px 0 0;border-top:1.5px solid var(--g5);margin-top:8px}
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+.qbtn{padding:6px 11px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid var(--g4);background:var(--g6);color:var(--g1);cursor:pointer;transition:all .15s;white-space:nowrap}
+.qbtn:hover{background:var(--g1);color:#fff;border-color:var(--g1)}
+.chat-row{display:flex;gap:8px;align-items:flex-end}
+.chat-row textarea{flex:1;padding:11px 13px;border-radius:var(--rs);border:1.5px solid var(--g5);font-size:13px;font-family:'Quicksand',sans-serif;background:var(--g6);color:var(--dark);outline:none;resize:none;line-height:1.5;max-height:100px;font-weight:600;transition:all .18s}
+.chat-row textarea:focus{border-color:var(--g3);background:#fff;box-shadow:0 0 0 3px rgba(67,160,71,.1)}
+.send-btn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--g2),var(--g1));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(27,94,32,.28);transition:all .2s}
+.send-btn:hover{transform:scale(1.08)}
+.send-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.api-note{font-size:10px;color:var(--light);text-align:center;margin-top:6px;font-weight:600}
+
+/* MISC */
+.divider{height:1px;background:var(--g5);margin:14px 0}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.stat-card{background:#fff;border-radius:var(--rs);border:1.5px solid var(--g5);padding:13px;text-align:center;box-shadow:0 2px 8px rgba(27,94,32,.05)}
+.stat-val{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--g1)}
+.stat-lbl{font-size:10px;color:var(--light);font-weight:700;margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+.collab-step{display:flex;gap:12px;margin-bottom:13px;align-items:flex-start}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--g1);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{}
+.step-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--mid);line-height:1.55;font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas" id="bg"></div>
+
+<div class="app">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo-row">
+    <svg width="32" height="32" viewBox="0 0 80 80">
+      <ellipse cx="40" cy="46" rx="27" ry="32" fill="#4CAF50"/>
+      <ellipse cx="40" cy="46" rx="27" ry="32" fill="none" stroke="#2E7D32" stroke-width="2.5"/>
+      <ellipse cx="40" cy="52" rx="17" ry="20" fill="#F5CBA7"/>
+      <ellipse cx="40" cy="56" rx="9" ry="11" fill="#6D4C41"/>
+      <circle cx="32" cy="39" r="4" fill="white"/><circle cx="48" cy="39" r="4" fill="white"/>
+      <circle cx="33" cy="40" r="2" fill="#1A1A1A"/><circle cx="49" cy="40" r="2" fill="#1A1A1A"/>
+      <path d="M33 50 Q40 57 47 50" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="40" cy="10" rx="7" ry="4.5" fill="#388E3C" transform="rotate(-10,40,10)"/>
+      <line x1="40" y1="6" x2="40" y2="16" stroke="#4E342E" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="logo-txt">NutriAI</div>
+      <div class="logo-sub" id="hdr-sub">Eat Smarter. Live Longer.</div>
+    </div>
+  </div>
+  <div class="lang-row">
+    <button class="lb on" onclick="setLang('en')">EN</button>
+    <button class="lb" onclick="setLang('fr')">FR</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nt on" id="nt-home" onclick="go('home')">Home</div>
+  <div class="nt" id="nt-features" onclick="go('features')">Features</div>
+  <div class="nt" id="nt-beauty" onclick="go('beauty')">Skin & Hair</div>
+  <div class="nt" id="nt-pricing" onclick="go('pricing')">Pricing</div>
+  <div class="nt" id="nt-personas" onclick="go('personas')">Who It's For</div>
+  <div class="nt" id="nt-specialists" onclick="go('specialists')">Specialists</div>
+  <div class="nt" id="nt-chat" onclick="go('chat')">💬 Ask Avo</div>
+</div>
+
+<!-- HOME -->
+<div class="scr on" id="scr-home">
+  <div class="hero">
+    <div class="hero-badge" id="h-badge">🥑 Now in Canada & USA</div>
+    <h1 id="h-title">Nutrition that knows you.<br>Inside & out.</h1>
+    <p id="h-desc">Snap a photo. Speak a meal. Type anything. NutriAI's 3-in-1 AI understands your food in seconds — then builds a plan around your goals, culture, skin, hair, and health.</p>
+    <div class="hero-btns">
+      <button class="btn btn-sm" onclick="go('pricing')"><span id="h-cta1">Start free — 14 days</span></button>
+      <button class="btn btn-sm btn-out" onclick="go('chat')"><span id="h-cta2">Ask Avo 🥑</span></button>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-val">3-in-1</div><div class="stat-lbl" id="st1">AI logging</div></div>
+    <div class="stat-card"><div class="stat-val">24/7</div><div class="stat-lbl" id="st2">AI coach</div></div>
+    <div class="stat-card"><div class="stat-val">$9.99</div><div class="stat-lbl" id="st3">per month</div></div>
+  </div>
+
+  <div class="card">
+    <div class="sec-title" id="h-how-title">How it works</div>
+    <div class="sec-sub" id="h-how-sub">Three steps to your healthiest self</div>
+    <div class="collab-step">
+      <div class="step-num">1</div>
+      <div class="step-body"><div class="step-title" id="hw1t">Snap, speak, or type your meal</div><div class="step-desc" id="hw1d">Our 3-in-1 multimodal AI logs your food instantly — no barcodes, no manual entry. Just eat and log in seconds.</div></div>
+    </div>
+    <div class="collab-step">
+      <div class="step-num">2</div>
+      <div class="step-body"><div class="step-title" id="hw2t">Get your personalized plan</div><div class="step-desc" id="hw2d">AI builds your week: meals, macros, skin nutrition, hair health — all adapted to your culture, goals, and dietary style.</div></div>
+    </div>
+    <div class="collab-step">
+      <div class="step-num">3</div>
+      <div class="step-body"><div class="step-title" id="hw3t">Talk to a real specialist</div><div class="step-desc" id="hw3d">Premium Plus connects you with certified dietitians, dermatologist-nutritionists, and hair specialists via live video.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="background:var(--g6);border-color:var(--g4)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="font-size:24px">🏆</div>
+      <div>
+        <div class="sec-title" id="h-diff-title" style="font-size:15px">What makes NutriAI different</div>
+        <div class="sec-sub" id="h-diff-sub" style="margin-bottom:0">Not just another calorie counter</div>
+      </div>
+    </div>
+    <ul class="feat-list">
+      <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="d1">3-in-1 multimodal AI (photo + voice + text) — only app with all three</span></li>
+      <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="d2">Skin & hair nutrition module — beauty from within</span></li>
+      <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="d3">Live certified specialist sessions — dietitians, dermatologists, trichologists</span></li>
+      <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="d4">Cultural food intelligence — plans adapted to your heritage</span></li>
+      <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="d5">Wearable sync — Apple Health, Fitbit, Garmin</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="scr" id="scr-features">
+  <div class="sec-title" id="f-title">Everything you need</div>
+  <div class="sec-sub" id="f-sub">One app. Your nutrition, beauty, and health — all connected.</div>
+
+  <div class="feat-grid">
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E8F5E9">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="3" stroke="#2E7D32" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="#4CAF50"/><path d="M13 7h3M13 11h3M6 14h10" stroke="#2E7D32" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-name" id="f1n">3-in-1 AI logging</div>
+      <div class="feat-desc" id="f1d">Photo, voice, or text. Log any meal in under 3 seconds.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FCE4EC">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="8" r="4" stroke="#D81B60" stroke-width="1.5"/><path d="M5 19c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="#D81B60" stroke-width="1.5" stroke-linecap="round"/><path d="M14 5.5c.5-.8 1.5-1 2 0" stroke="#D81B60" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-name" id="f2n">Skin & hair score</div>
+      <div class="feat-desc" id="f2d">Real-time nutrition score for your skin clarity and hair health.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E3F2FD">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="6" width="14" height="11" rx="2" stroke="#1565C0" stroke-width="1.5"/><path d="M4 10h14" stroke="#1565C0" stroke-width="1.2"/><circle cx="11" cy="3" r="1.5" fill="#1565C0"/><path d="M11 4.5V6" stroke="#1565C0" stroke-width="1.2"/></svg>
+      </div>
+      <div class="feat-name" id="f3n">Live specialist calls</div>
+      <div class="feat-desc" id="f3d">Book video sessions with certified RDs and skin specialists.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#F3E5F5">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3c0 0-6 4-6 9a6 6 0 0 0 12 0c0-5-6-9-6-9z" stroke="#6A1B9A" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 11v5" stroke="#6A1B9A" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-name" id="f4n">Hair nutrition plan</div>
+      <div class="feat-desc" id="f4d">Weekly deficiency alerts for biotin, iron, zinc and more.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E0F2F1">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="7" stroke="#00695C" stroke-width="1.5"/><path d="M8 11l2 2 4-4" stroke="#00695C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="feat-name" id="f5n">Cultural meal plans</div>
+      <div class="feat-desc" id="f5d">Indian, Punjabi, Latin, Chinese, Middle Eastern & more.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FFF8E1">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="7" width="16" height="10" rx="2" stroke="#E65100" stroke-width="1.5"/><path d="M7 7V5a4 4 0 0 1 8 0v2" stroke="#E65100" stroke-width="1.5"/><circle cx="11" cy="12" r="2" fill="#E65100"/></svg>
+      </div>
+      <div class="feat-name" id="f6n">Wearable sync</div>
+      <div class="feat-desc" id="f6d">Apple Health, Fitbit & Garmin connected automatically.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E8F5E9">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 6h14M4 11h10M4 16h7" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-name" id="f7n">AI meal plans</div>
+      <div class="feat-desc" id="f7d">7-day plans generated in seconds. Updated weekly by AI.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FCE4EC">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="7" stroke="#880E4F" stroke-width="1.5"/><path d="M11 7v4l3 2" stroke="#880E4F" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-name" id="f8n">GLP-1 companion</div>
+      <div class="feat-desc" id="f8d">Nutrition protocol for Ozempic & Wegovy users. Evidence-based.</div>
+    </div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,var(--g6),#F1F8E9);border-color:var(--g4)">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="font-size:32px">💬</div>
+      <div>
+        <div class="step-title" id="f-chat-title">Ask Avo anything — live AI chat</div>
+        <div class="step-desc" id="f-chat-desc">Your 24/7 AI nutritionist, powered by Claude. Ask about meals, skin foods, hair nutrition, your plan — anytime.</div>
+        <button class="btn btn-sm" style="margin-top:10px" onclick="go('chat')"><span id="f-chat-cta">Chat with Avo now</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SKIN & HAIR -->
+<div class="scr" id="scr-beauty">
+  <div class="sec-title" id="bh-title">Beauty from within</div>
+  <div class="sec-sub" id="bh-sub">Your skincare routine starts in your kitchen. NutriAI tracks the nutrients that matter for radiant skin and strong hair — updated after every meal.</div>
+
+  <div class="skin-tabs">
+    <button class="stab on" id="stab-skin" onclick="showBeauty('skin')" style="background:#D81B60;color:#fff"><span id="bt-skin">Skin</span></button>
+    <button class="stab" id="stab-hair" onclick="showBeauty('hair')"><span id="bt-hair">Hair</span></button>
+  </div>
+
+  <div id="beauty-skin">
+    <div class="nutrient-grid">
+      <div class="nutrient-card"><div class="nut-icon">✨</div><div class="nut-name" id="sk1n">Vitamin C</div><div class="nut-effect" id="sk1e">Collagen synthesis & brightness</div><div class="nut-source" id="sk1s">Bell peppers, kiwi, citrus</div></div>
+      <div class="nutrient-card"><div class="nut-icon">🔷</div><div class="nut-name" id="sk2n">Zinc</div><div class="nut-effect" id="sk2e">Acne reduction & healing</div><div class="nut-source" id="sk2s">Pumpkin seeds, lentils, chickpeas</div></div>
+      <div class="nutrient-card"><div class="nut-icon">🐟</div><div class="nut-name" id="sk3n">Omega-3</div><div class="nut-effect" id="sk3e">Barrier hydration & glow</div><div class="nut-source" id="sk3s">Salmon, walnuts, chia seeds</div></div>
+      <div class="nutrient-card"><div class="nut-icon">🟠</div><div class="nut-name" id="sk4n">Vitamin A</div><div class="nut-effect" id="sk4e">Cell turnover & anti-aging</div><div class="nut-source" id="sk4s">Sweet potato, carrots, spinach</div></div>
+      <div class="nutrient-card"><div class="nut-icon">🫐</div><div class="nut-name" id="sk5n">Antioxidants</div><div class="nut-effect" id="sk5e">UV damage protection</div><div class="nut-source" id="sk5s">Blueberries, green tea, dark choc</div></div>
+      <div class="nutrient-card"><div class="nut-icon">💧</div><div class="nut-name" id="sk6n">Hyaluronic foods</div><div class="nut-effect" id="sk6e">Deep skin hydration</div><div class="nut-source" id="sk6s">Bone broth, soy, leafy greens</div></div>
+    </div>
+    <div class="card" style="background:#FCE4EC;border-color:#F48FB1">
+      <div class="bdg bdg-pk" id="sk-camp-badge">Campaign angle</div>
+      <div class="step-title" id="sk-camp-title">"Eat Your Way to Glowing Skin" — #FeedYourFace</div>
+      <div class="step-desc" id="sk-camp-desc">30-day social challenge: users log meals and watch their skin score change in real time. Seeded by 20 dermatologist-nutritionist creators. Target: 50M impressions at launch.</div>
+    </div>
+  </div>
+
+  <div id="beauty-hair" style="display:none">
+    <div class="nutrient-grid">
+      <div class="nutrient-card"><div class="nut-icon">🌿</div><div class="nut-name" id="hr1n">Biotin (B7)</div><div class="nut-effect" id="hr1e">Keratin production & strength</div><div class="nut-source" id="hr1s">Eggs, almonds, sweet potato</div></div>
+      <div class="nutrient-card"><div class="nut-icon">🩸</div><div class="nut-name" id="hr2n">Iron</div><div class="nut-effect" id="hr2e">Follicle strength & growth</div><div class="nut-source" id="hr2s">Lentils, spinach, red meat</div></div>
+      <div class="nutrient-card"><div class="nut-icon">🥩</div><div class="nut-name" id="hr3n">Protein</div><div class="nut-effect" id="hr3e">Hair shaft structure</div><div class="nut-source" id="hr3s">Chicken, tofu, Greek yogurt</div></div>
+      <div class="nutrient-card"><div class="nut-icon">☀️</div><div class="nut-name" id="hr4n">Vitamin D</div><div class="nut-effect" id="hr4e">Follicle cycling & density</div><div class="nut-source" id="hr4s">Fatty fish, egg yolks, fortified foods</div></div>
+      <div class="nutrient-card"><div class="nut-icon">🔮</div><div class="nut-name" id="hr5n">Selenium</div><div class="nut-effect" id="hr5e">Scalp health & dandruff</div><div class="nut-source" id="hr5s">Brazil nuts, tuna, sunflower seeds</div></div>
+      <div class="nutrient-card"><div class="nut-icon">🦪</div><div class="nut-name" id="hr6n">Zinc</div><div class="nut-effect" id="hr6e">Hair loss prevention</div><div class="nut-source" id="hr6s">Oysters, pumpkin seeds, beef</div></div>
+    </div>
+    <div class="card" style="background:#F3E5F5;border-color:#CE93D8">
+      <div class="bdg bdg-p" id="hr-camp-badge">Partnership angle</div>
+      <div class="step-title" id="hr-camp-title">Trichologist & hair clinic network</div>
+      <div class="step-desc" id="hr-camp-desc">NutriAI integrates with certified trichologists and hair restoration clinics as the prescribed nutrition companion app. Targets: alopecia, postpartum hair loss, and hormonal thinning — all nutrition-linked conditions.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="scr" id="scr-pricing">
+  <div class="sec-title" id="pr-title">Simple, transparent pricing</div>
+  <div class="sec-sub" id="pr-sub">Every paid plan includes a 14-day free trial — no credit card required.</div>
+
+  <div class="trial-strip">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12" fill="#E8F5E9" stroke="#81C784" stroke-width="1.5"/><path d="M9 14l3 3 7-7" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <p id="trial-txt">14-day free trial on all paid plans · No credit card · Cancel anytime</p>
+  </div>
+
+  <div class="plan-grid">
+    <div class="plan">
+      <div class="plan-name" id="pl0-name">Free</div>
+      <div class="plan-price">$0 <span id="pl0-per">/ forever</span></div>
+      <div class="plan-tagline" id="pl0-tag">Start exploring NutriAI with no commitment</div>
+      <ul class="feat-list">
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p0f1">3 AI meal logs per day (photo or text)</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p0f2">Basic macro breakdown</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p0f3">Weekly nutrition score</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p0f4">1 AI meal suggestion per day</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p0f5">Community access</span></li>
+        <li><div class="lk">🔒</div><span style="color:#bbb" id="p0f6">Skin & hair insights (locked)</span></li>
+        <li><div class="lk">🔒</div><span style="color:#bbb" id="p0f7">Specialist sessions (locked)</span></li>
+      </ul>
+      <button class="btn btn-full btn-out btn-sm" id="pl0-btn">Get started free</button>
+    </div>
+
+    <div class="plan popular">
+      <div class="pop-tag" id="pop-tag">Most popular</div>
+      <div class="plan-name" id="pl1-name">Premium</div>
+      <div class="plan-price">$9.99 <span id="pl1-per">/ month</span></div>
+      <div class="plan-tagline" id="pl1-tag">Full nutrition intelligence + skin & hair module</div>
+      <ul class="feat-list">
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p1f1">Unlimited AI meal logs — photo, voice & text</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p1f2">Full micronutrient & deficiency tracking</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p1f3">Personalized 7-day meal plans, weekly</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p1f4">Skin & hair nutrition dashboard</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p1f5">Wearable sync (Apple Health, Fitbit)</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p1f6">24/7 AI coach — Avo</span></li>
+        <li><div class="lk">🔒</div><span style="color:#bbb" id="p1f7">Live specialist sessions (upgrade)</span></li>
+      </ul>
+      <button class="btn btn-full btn-sm" id="pl1-btn">Start 14-day free trial</button>
+      <div style="font-size:11px;color:var(--light);text-align:center;margin-top:7px;font-weight:600" id="pl1-annual">Or $89.99/yr — save 25%</div>
+    </div>
+
+    <div class="plan">
+      <div class="plan-name" id="pl2-name">Premium Plus</div>
+      <div class="plan-price">$19.99 <span id="pl2-per">/ month</span></div>
+      <div class="plan-tagline" id="pl2-tag">Everything in Premium + live specialist access</div>
+      <ul class="feat-list">
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p2f1">All Premium features included</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p2f2">2 live video sessions/month with RD or dermatologist</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p2f3">Custom skin-food & hair protocol from specialist</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p2f4">Lab result upload & interpretation</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p2f5">Priority same-day AI responses</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p2f6">Curated supplement recommendations</span></li>
+      </ul>
+      <button class="btn btn-full btn-sm" id="pl2-btn">Start 14-day free trial</button>
+      <div style="font-size:11px;color:var(--light);text-align:center;margin-top:7px;font-weight:600" id="pl2-annual">Or $179.99/yr — save 25%</div>
+    </div>
+
+    <div class="plan">
+      <div class="plan-name" id="pl3-name">Corporate Wellness</div>
+      <div class="plan-price" style="font-size:22px">Custom <span id="pl3-per">/ per seat</span></div>
+      <div class="plan-tagline" id="pl3-tag">For HR teams — white-labeled, HIPAA/PIPEDA compliant</div>
+      <ul class="feat-list">
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p3f1">All Premium Plus for every employee</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p3f2">HR admin dashboard + anonymized analytics</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p3f3">Quarterly wellness ROI reports</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p3f4">Dedicated account manager</span></li>
+        <li><div class="ck"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5l2 2 4-4" stroke="#2E7D32" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div><span id="p3f5">30-day free pilot for teams of 50+</span></li>
+      </ul>
+      <button class="btn btn-full btn-sm btn-out" id="pl3-btn">Request a demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHO IT'S FOR / PERSONAS -->
+<div class="scr" id="scr-personas">
+  <div class="sec-title" id="pe-title">Who NutriAI is for</div>
+  <div class="sec-sub" id="pe-sub">AI-driven segmentation — every persona gets a fully tailored experience</div>
+
+  <div class="persona-tabs" id="persona-tabs">
+    <button class="ptab on" onclick="showPersona(0,this)" id="pt0">Jordan</button>
+    <button class="ptab" onclick="showPersona(1,this)" id="pt1">Sarah & Mike</button>
+    <button class="ptab" onclick="showPersona(2,this)" id="pt2">Eleanor</button>
+    <button class="ptab" onclick="showPersona(3,this)" id="pt3">Priya</button>
+    <button class="ptab" onclick="showPersona(4,this)" id="pt4">Marcus</button>
+  </div>
+
+  <div id="persona-display"></div>
+
+  <div class="card" style="background:var(--g6);border-color:var(--g4);margin-top:4px">
+    <div class="bdg bdg-g" id="seg-badge">AI segmentation strategy</div>
+    <div class="step-title" id="seg-title">How NutriAI targets each segment</div>
+    <div class="step-desc" id="seg-desc">AI generates 20+ ad variants per persona daily. Each user gets a distinct onboarding flow, content feed, and specialist recommendation — automatically. No manual configuration needed.</div>
+  </div>
+</div>
+
+<!-- SPECIALISTS -->
+<div class="scr" id="scr-specialists">
+  <div class="sec-title" id="sp-title">Our specialist network</div>
+  <div class="sec-sub" id="sp-sub">Real experts behind the AI. Every Premium Plus plan connects you with certified professionals in your area of need.</div>
+
+  <div id="spec-list">
+    <div class="spec-card"><div class="spec-av" style="background:#E8F5E9">🥗</div><div><div class="spec-name" id="sp1n">Registered Dietitians (RDs)</div><div class="spec-role" id="sp1r">Core clinical anchor — 2 live sessions/month in Premium Plus</div><div class="tag-row"><span class="tag" style="background:#E8F5E9;color:#1B5E20" id="sp1t1">Weight management</span><span class="tag" style="background:#E8F5E9;color:#1B5E20" id="sp1t2">Meal planning</span><span class="tag" style="background:#E8F5E9;color:#1B5E20" id="sp1t3">Sports nutrition</span></div></div></div>
+    <div class="spec-card"><div class="spec-av" style="background:#FCE4EC">🌿</div><div><div class="spec-name" id="sp2n">Dermatologist-Nutritionists</div><div class="spec-role" id="sp2r">Skin & hair module specialists — co-create food-skin protocols</div><div class="tag-row"><span class="tag" style="background:#FCE4EC;color:#880E4F" id="sp2t1">Acne protocols</span><span class="tag" style="background:#FCE4EC;color:#880E4F" id="sp2t2">Eczema diet</span><span class="tag" style="background:#FCE4EC;color:#880E4F" id="sp2t3">Anti-aging meals</span></div></div></div>
+    <div class="spec-card"><div class="spec-av" style="background:#F3E5F5">💜</div><div><div class="spec-name" id="sp3n">Endocrinologists</div><div class="spec-role" id="sp3r">Diabetes, thyroid, PCOS, hormonal nutrition</div><div class="tag-row"><span class="tag" style="background:#F3E5F5;color:#4A148C" id="sp3t1">GLP-1 companion</span><span class="tag" style="background:#F3E5F5;color:#4A148C" id="sp3t2">PCOS nutrition</span><span class="tag" style="background:#F3E5F5;color:#4A148C" id="sp3t3">Glycemic plans</span></div></div></div>
+    <div class="spec-card"><div class="spec-av" style="background:#E0F2F1">🔬</div><div><div class="spec-name" id="sp4n">Trichologists</div><div class="spec-role" id="sp4r">Certified hair & scalp specialists — hair restoration nutrition</div><div class="tag-row"><span class="tag" style="background:#E0F2F1;color:#004D40" id="sp4t1">Alopecia protocols</span><span class="tag" style="background:#E0F2F1;color:#004D40" id="sp4t2">Postpartum loss</span><span class="tag" style="background:#E0F2F1;color:#004D40" id="sp4t3">Scalp health</span></div></div></div>
+    <div class="spec-card"><div class="spec-av" style="background:#FFF8E1">🏃</div><div><div class="spec-name" id="sp5n">Sports Dietitians</div><div class="spec-role" id="sp5r">Performance, recovery, and body composition</div><div class="tag-row"><span class="tag" style="background:#FFF8E1;color:#E65100" id="sp5t1">Muscle gain</span><span class="tag" style="background:#FFF8E1;color:#E65100" id="sp5t2">Endurance fueling</span><span class="tag" style="background:#FFF8E1;color:#E65100" id="sp5t3">Recovery meals</span></div></div></div>
+    <div class="spec-card"><div class="spec-av" style="background:#E3F2FD">🤰</div><div><div class="spec-name" id="sp6n">Perinatal Nutritionists</div><div class="spec-role" id="sp6r">Pregnancy, postpartum recovery, and menopause</div><div class="tag-row"><span class="tag" style="background:#E3F2FD;color:#0D47A1" id="sp6t1">Prenatal plans</span><span class="tag" style="background:#E3F2FD;color:#0D47A1" id="sp6t2">Postpartum diet</span><span class="tag" style="background:#E3F2FD;color:#0D47A1" id="sp6t3">Menopause nutrition</span></div></div></div>
+  </div>
+
+  <div class="card" style="background:var(--g6);border-color:var(--g4)">
+    <div class="bdg bdg-g" id="collab-badge">Partnership model</div>
+    <div class="step-title" id="collab-title">How specialists earn with NutriAI</div>
+    <div class="step-desc" id="collab-desc">Specialists join free. They earn 30% commission on every Premium Plus subscription they refer. NutriAI provides the platform, scheduling, and payments. No upfront cost — pure performance revenue.</div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="scr" id="scr-chat" style="padding-bottom:10px">
+  <div class="chat-wrap">
+    <div class="chat-header">
+      <div class="chat-avo">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="46" rx="27" ry="32" fill="#4CAF50"/>
+          <ellipse cx="40" cy="52" rx="17" ry="20" fill="#F5CBA7"/>
+          <ellipse cx="40" cy="56" rx="9" ry="11" fill="#6D4C41"/>
+          <circle cx="32" cy="39" r="4" fill="white"/><circle cx="48" cy="39" r="4" fill="white"/>
+          <circle cx="33" cy="40" r="2" fill="#1A1A1A"/><circle cx="49" cy="40" r="2" fill="#1A1A1A"/>
+          <path d="M33 50 Q40 57 47 50" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="40" cy="10" rx="7" ry="4.5" fill="#388E3C" transform="rotate(-10,40,10)"/>
+          <line x1="40" y1="6" x2="40" y2="16" stroke="#4E342E" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="chat-online"><span class="chat-status-dot"></span><span id="chat-name">Avo — NutriAI Coach</span></div>
+        <div class="chat-sub" id="chat-sub">AI nutritionist · Skin & hair expert · Always on</div>
+      </div>
+    </div>
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-input-area">
+      <div class="quick-btns" id="quick-btns"></div>
+      <div class="chat-row">
+        <textarea id="chat-input" rows="1" onkeydown="chatKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendChat()">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M15.5 2.5L8 10M15.5 2.5L10.5 15.5L8 10L2.5 8L15.5 2.5Z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="api-note" id="api-note">Powered by Claude AI · Your data stays private</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .app -->
+
+<script>
+// ── BACKGROUND AVOS ──
+(function(){
+  const bg=document.getElementById('bg');
+  const s=`<svg viewBox="0 0 60 72" xmlns="http://www.w3.org/2000/svg"><ellipse cx="30" cy="40" rx="22" ry="28" fill="#388E3C"/><ellipse cx="30" cy="46" rx="14" ry="17" fill="#F5CBA7"/><ellipse cx="30" cy="50" rx="7.5" ry="9" fill="#6D4C41"/><circle cx="23" cy="34" r="3" fill="white"/><circle cx="37" cy="34" r="3" fill="white"/><circle cx="24" cy="35" r="1.5" fill="#1A1A1A"/><circle cx="38" cy="35" r="1.5" fill="#1A1A1A"/><path d="M24 44 Q30 50 36 44" stroke="#1A1A1A" stroke-width="1.5" fill="none" stroke-linecap="round"/><ellipse cx="30" cy="9" rx="5" ry="3.5" fill="#388E3C" transform="rotate(-10,30,9)"/><line x1="30" y1="6" x2="30" y2="13" stroke="#4E342E" stroke-width="2" stroke-linecap="round"/></svg>`;
+  for(let i=0;i<14;i++){const d=document.createElement('div');d.className='bg-avo';const sz=24+Math.random()*40;d.style.cssText=`width:${sz}px;height:${sz*1.2}px;left:${Math.random()*100}%;animation-duration:${14+Math.random()*20}s;animation-delay:${-Math.random()*24}s`;d.innerHTML=s;bg.appendChild(d);}
+})();
+
+// ── LANGUAGE ──
+let lang = 'en';
+
+const T = {
+  en: {
+    hdrSub:'Eat Smarter. Live Longer.',
+    nav:['Home','Features','Skin & Hair','Pricing','Who It\'s For','Specialists','💬 Ask Avo'],
+    hBadge:'🥑 Now in Canada & USA',
+    hTitle:'Nutrition that knows you.<br>Inside & out.',
+    hDesc:'Snap a photo. Speak a meal. Type anything. NutriAI\'s 3-in-1 AI understands your food in seconds — then builds a plan around your goals, culture, skin, hair, and health.',
+    hCta1:'Start free — 14 days', hCta2:'Ask Avo 🥑',
+    st1:'AI logging', st2:'AI coach', st3:'per month',
+    hHowTitle:'How it works', hHowSub:'Three steps to your healthiest self',
+    hw1t:'Snap, speak, or type your meal', hw1d:'Our 3-in-1 multimodal AI logs your food instantly — no barcodes, no manual entry.',
+    hw2t:'Get your personalized plan', hw2d:'AI builds your week: meals, macros, skin nutrition, hair health — adapted to your culture and goals.',
+    hw3t:'Talk to a real specialist', hw3d:'Premium Plus connects you with certified dietitians, dermatologist-nutritionists, and hair specialists.',
+    hDiffTitle:'What makes NutriAI different', hDiffSub:'Not just another calorie counter',
+    d1:'3-in-1 multimodal AI (photo + voice + text) — only app with all three',
+    d2:'Skin & hair nutrition module — beauty from within',
+    d3:'Live certified specialist sessions — dietitians, dermatologists, trichologists',
+    d4:'Cultural food intelligence — plans adapted to your heritage',
+    d5:'Wearable sync — Apple Health, Fitbit, Garmin',
+    fTitle:'Everything you need', fSub:'One app. Your nutrition, beauty, and health — all connected.',
+    f1n:'3-in-1 AI logging', f1d:'Photo, voice, or text. Log any meal in under 3 seconds.',
+    f2n:'Skin & hair score', f2d:'Real-time nutrition score for skin clarity and hair health.',
+    f3n:'Live specialist calls', f3d:'Book video sessions with certified RDs and skin specialists.',
+    f4n:'Hair nutrition plan', f4d:'Weekly deficiency alerts for biotin, iron, zinc and more.',
+    f5n:'Cultural meal plans', f5d:'Indian, Punjabi, Latin, Chinese, Middle Eastern & more.',
+    f6n:'Wearable sync', f6d:'Apple Health, Fitbit & Garmin connected automatically.',
+    f7n:'AI meal plans', f7d:'7-day plans generated in seconds. Updated weekly by AI.',
+    f8n:'GLP-1 companion', f8d:'Nutrition protocol for Ozempic & Wegovy users. Evidence-based.',
+    fChatTitle:'Ask Avo anything — live AI chat', fChatDesc:'Your 24/7 AI nutritionist, powered by Claude. Ask about meals, skin foods, hair nutrition — anytime.', fChatCta:'Chat with Avo now',
+    bhTitle:'Beauty from within', bhSub:'Your skincare routine starts in your kitchen. NutriAI tracks nutrients for radiant skin and strong hair — updated after every meal.',
+    btSkin:'Skin', btHair:'Hair',
+    skCampBadge:'Campaign angle', skCampTitle:'"Eat Your Way to Glowing Skin" — #FeedYourFace', skCampDesc:'30-day social challenge: users log meals and watch their skin score change in real time. Seeded by 20 dermatologist-nutritionist creators. Target: 50M impressions.',
+    hrCampBadge:'Partnership angle', hrCampTitle:'Trichologist & hair clinic network', hrCampDesc:'NutriAI integrates with certified trichologists and hair restoration clinics as the prescribed nutrition companion. Targets: alopecia, postpartum hair loss, and hormonal thinning.',
+    prTitle:'Simple, transparent pricing', prSub:'Every paid plan includes a 14-day free trial — no credit card required.',
+    trialTxt:'14-day free trial on all paid plans · No credit card · Cancel anytime',
+    pl0Name:'Free', pl0Per:'/ forever', pl0Tag:'Start exploring NutriAI with no commitment',
+    p0f1:'3 AI meal logs per day (photo or text)', p0f2:'Basic macro breakdown', p0f3:'Weekly nutrition score', p0f4:'1 AI meal suggestion per day', p0f5:'Community access', p0f6:'Skin & hair insights (locked)', p0f7:'Specialist sessions (locked)', pl0Btn:'Get started free',
+    popTag:'Most popular',
+    pl1Name:'Premium', pl1Per:'/ month', pl1Tag:'Full nutrition intelligence + skin & hair module',
+    p1f1:'Unlimited AI meal logs — photo, voice & text', p1f2:'Full micronutrient & deficiency tracking', p1f3:'Personalized 7-day meal plans, weekly', p1f4:'Skin & hair nutrition dashboard', p1f5:'Wearable sync (Apple Health, Fitbit)', p1f6:'24/7 AI coach — Avo', p1f7:'Live specialist sessions (upgrade)', pl1Btn:'Start 14-day free trial', pl1Annual:'Or $89.99/yr — save 25%',
+    pl2Name:'Premium Plus', pl2Per:'/ month', pl2Tag:'Everything in Premium + live specialist access',
+    p2f1:'All Premium features included', p2f2:'2 live video sessions/month with RD or dermatologist', p2f3:'Custom skin-food & hair protocol from specialist', p2f4:'Lab result upload & interpretation', p2f5:'Priority same-day AI responses', p2f6:'Curated supplement recommendations', pl2Btn:'Start 14-day free trial', pl2Annual:'Or $179.99/yr — save 25%',
+    pl3Name:'Corporate Wellness', pl3Per:'/ per seat', pl3Tag:'For HR teams — white-labeled, HIPAA/PIPEDA compliant',
+    p3f1:'All Premium Plus for every employee', p3f2:'HR admin dashboard + anonymized analytics', p3f3:'Quarterly wellness ROI reports', p3f4:'Dedicated account manager', p3f5:'30-day free pilot for teams of 50+', pl3Btn:'Request a demo',
+    peTitle:'Who NutriAI is for', peSub:'AI-driven segmentation — every persona gets a fully tailored experience',
+    segBadge:'AI segmentation strategy', segTitle:'How NutriAI targets each segment', segDesc:'AI generates 20+ ad variants per persona daily. Each user gets a distinct onboarding flow, content feed, and specialist recommendation — automatically.',
+    spTitle:'Our specialist network', spSub:'Real experts behind the AI. Every Premium Plus plan connects you with certified professionals.',
+    sp1n:'Registered Dietitians (RDs)', sp1r:'Core clinical anchor — 2 live sessions/month in Premium Plus', sp1t1:'Weight management', sp1t2:'Meal planning', sp1t3:'Sports nutrition',
+    sp2n:'Dermatologist-Nutritionists', sp2r:'Skin & hair module specialists — co-create food-skin protocols', sp2t1:'Acne protocols', sp2t2:'Eczema diet', sp2t3:'Anti-aging meals',
+    sp3n:'Endocrinologists', sp3r:'Diabetes, thyroid, PCOS, hormonal nutrition', sp3t1:'GLP-1 companion', sp3t2:'PCOS nutrition', sp3t3:'Glycemic plans',
+    sp4n:'Trichologists', sp4r:'Certified hair & scalp specialists — hair restoration nutrition', sp4t1:'Alopecia protocols', sp4t2:'Postpartum loss', sp4t3:'Scalp health',
+    sp5n:'Sports Dietitians', sp5r:'Performance, recovery, and body composition', sp5t1:'Muscle gain', sp5t2:'Endurance fueling', sp5t3:'Recovery meals',
+    sp6n:'Perinatal Nutritionists', sp6r:'Pregnancy, postpartum recovery, and menopause', sp6t1:'Prenatal plans', sp6t2:'Postpartum diet', sp6t3:'Menopause nutrition',
+    collabBadge:'Partnership model', collabTitle:'How specialists earn with NutriAI', collabDesc:'Specialists join free. They earn 30% commission on every Premium Plus subscription they refer. NutriAI provides the platform, scheduling, and payments.',
+    chatName:'Avo — NutriAI Coach', chatSub:'AI nutritionist · Skin & hair expert · Always on',
+    chatWelcome:'Hey! I\'m <strong>Avo</strong> 🥑 — your NutriAI coach!<br><br>I can help with meal ideas, skin & hair nutrition, plan questions, your calorie goals, specialist advice, and more. What\'s on your mind?',
+    chatPlaceholder:'Ask Avo anything about nutrition…',
+    apiNote:'Powered by Claude AI · Your data stays private',
+    quickBtns:['What should I eat today?','Foods for glowing skin','High protein vegan meals','Help me lose weight','Hair loss nutrition tips','What\'s in my plan?'],
+    chatErr:'Oops — I had a little hiccup connecting. Try again! 🥑',
+    chatThinking:'Avo is thinking…',
+    personas:[
+      {name:'Jordan Lee',tag:'28 · Fitness fan · Vancouver, BC',emoji:'🏋️',bg:'#E8F5E9',goal:'Build lean muscle & optimize macros',pain:'No time to track macros manually',hook:'"Snap your meal, hit your macros — done in 3 seconds."',channel:'TikTok · Gym influencers · Strava',plan:'Premium — wearable sync + macro tracking'},
+      {name:'Sarah & Mike P.',tag:'34 · New parents · North Vancouver',emoji:'👶',bg:'#FFF8E1',goal:'Healthy family meals in under 30 min',pain:'Baby chaos — no time or energy to cook',hook:'"5-minute meal plans your whole family will love."',channel:'Instagram · Parenting blogs · Facebook groups',plan:'Premium — family-friendly meal plans'},
+      {name:'Eleanor Wong',tag:'67 · Senior · Richmond, BC',emoji:'🩺',bg:'#E3F2FD',goal:'Manage Type 2 diabetes through food',pain:'Confusing, conflicting nutrition advice',hook:'"Your personal dietitian, always available."',channel:'Facebook · GP referrals · Community centres',plan:'Premium Plus — endocrinologist sessions'},
+      {name:'Priya Sharma',tag:'31 · PCOS · Surrey, BC',emoji:'🌸',bg:'#FCE4EC',goal:'Hormonal balance & clear skin',pain:'PCOS diet is complex and contradictory',hook:'"Food that works with your hormones, not against them."',channel:'Instagram · PCOS forums · Dietitian creators',plan:'Premium Plus — dermatologist + endocrinologist'},
+      {name:'Marcus Thompson',tag:'45 · Corporate exec · Toronto, ON',emoji:'💼',bg:'#F3E5F5',goal:'Reduce stress eating & improve energy',pain:'Traveling constantly, no consistent routine',hook:'"Your nutrition coach that travels with you."',channel:'LinkedIn · Podcast sponsorships · Airport ads',plan:'Corporate Wellness — company benefit'}
+    ]
+  },
+  fr: {
+    hdrSub:'Mangez mieux. Vivez plus longtemps.',
+    nav:['Accueil','Fonctionnalités','Peau & Cheveux','Tarifs','Pour qui','Spécialistes','💬 Parler à Avo'],
+    hBadge:'🥑 Maintenant au Canada & aux USA',
+    hTitle:'Une nutrition qui vous connaît.<br>Dedans et dehors.',
+    hDesc:'Prenez une photo. Parlez d\'un repas. Tapez n\'importe quoi. L\'IA 3-en-1 de NutriAI comprend votre alimentation en secondes — et crée un plan autour de vos objectifs, culture, peau, cheveux et santé.',
+    hCta1:'Essai gratuit — 14 jours', hCta2:'Parler à Avo 🥑',
+    st1:'Journalisation IA', st2:'Coach IA', st3:'par mois',
+    hHowTitle:'Comment ça marche', hHowSub:'Trois étapes vers votre meilleure santé',
+    hw1t:'Photographiez, parlez ou tapez votre repas', hw1d:'Notre IA multimodale 3-en-1 enregistre vos repas instantanément — sans codes-barres ni saisie manuelle.',
+    hw2t:'Recevez votre plan personnalisé', hw2d:'L\'IA construit votre semaine : repas, macros, nutrition cutanée, santé capillaire — adapté à votre culture.',
+    hw3t:'Parlez à un vrai spécialiste', hw3d:'Premium Plus vous connecte avec des diététiciens certifiés, des dermatologues-nutritionnistes et des trichologues.',
+    hDiffTitle:'Ce qui distingue NutriAI', hDiffSub:'Bien plus qu\'un simple compteur de calories',
+    d1:'IA multimodale 3-en-1 (photo + voix + texte) — la seule appli avec les trois',
+    d2:'Module nutrition peau & cheveux — la beauté vient de l\'intérieur',
+    d3:'Sessions avec spécialistes certifiés — diététiciens, dermatologues, trichologues',
+    d4:'Intelligence alimentaire culturelle — plans adaptés à votre patrimoine',
+    d5:'Synchronisation wearable — Apple Health, Fitbit, Garmin',
+    fTitle:'Tout ce dont vous avez besoin', fSub:'Une appli. Votre nutrition, beauté et santé — tout connecté.',
+    f1n:'Journalisation IA 3-en-1', f1d:'Photo, voix ou texte. Enregistrez tout repas en moins de 3 secondes.',
+    f2n:'Score peau & cheveux', f2d:'Score nutritionnel en temps réel pour la clarté de la peau et la santé capillaire.',
+    f3n:'Appels spécialistes en direct', f3d:'Réservez des sessions vidéo avec des diététiciens et spécialistes de la peau certifiés.',
+    f4n:'Plan nutrition capillaire', f4d:'Alertes hebdomadaires sur les carences en biotine, fer, zinc et plus.',
+    f5n:'Plans repas culturels', f5d:'Indien, Punjabi, Latin, Chinois, Moyen-Oriental et plus.',
+    f6n:'Synchronisation wearable', f6d:'Apple Health, Fitbit & Garmin connectés automatiquement.',
+    f7n:'Plans repas IA', f7d:'Plans 7 jours générés en secondes. Mis à jour chaque semaine par IA.',
+    f8n:'Compagnon GLP-1', f8d:'Protocole nutritionnel pour les utilisateurs d\'Ozempic & Wegovy. Fondé sur des preuves.',
+    fChatTitle:'Posez n\'importe quelle question à Avo', fChatDesc:'Votre nutritionniste IA 24h/24, propulsé par Claude. Posez des questions sur les repas, la peau, les cheveux — n\'importe quand.', fChatCta:'Chatter avec Avo maintenant',
+    bhTitle:'La beauté vient de l\'intérieur', bhSub:'Votre routine beauté commence dans votre cuisine. NutriAI suit les nutriments essentiels pour une peau éclatante et des cheveux forts.',
+    btSkin:'Peau', btHair:'Cheveux',
+    skCampBadge:'Angle de campagne', skCampTitle:'"Mangez pour une peau éclatante" — #NourrissonTaPeau', skCampDesc:'Défi social de 30 jours : les utilisateurs journalisent leurs repas et regardent leur score de peau évoluer. Lancé par 20 créateurs dermatologues-nutritionnistes.',
+    hrCampBadge:'Angle partenariat', hrCampTitle:'Réseau de trichologues & cliniques capillaires', hrCampDesc:'NutriAI s\'intègre avec des trichologues certifiés et des cliniques de restauration capillaire comme application nutritionnelle prescrite.',
+    prTitle:'Tarifs simples et transparents', prSub:'Chaque plan payant inclut un essai gratuit de 14 jours — sans carte bancaire.',
+    trialTxt:'Essai gratuit 14 jours sur tous les plans · Aucune carte bancaire · Annulation à tout moment',
+    pl0Name:'Gratuit', pl0Per:'/ pour toujours', pl0Tag:'Commencez à explorer NutriAI sans engagement',
+    p0f1:'3 journalisations IA par jour (photo ou texte)', p0f2:'Bilan macro de base', p0f3:'Score nutritionnel hebdomadaire', p0f4:'1 suggestion de repas IA par jour', p0f5:'Accès communauté', p0f6:'Conseils peau & cheveux (verrouillé)', p0f7:'Sessions spécialistes (verrouillé)', pl0Btn:'Commencer gratuitement',
+    popTag:'Le plus populaire',
+    pl1Name:'Premium', pl1Per:'/ mois', pl1Tag:'Intelligence nutritionnelle complète + module peau & cheveux',
+    p1f1:'Journalisations IA illimitées — photo, voix & texte', p1f2:'Suivi complet des micronutriments & carences', p1f3:'Plans repas personnalisés 7 jours, chaque semaine', p1f4:'Tableau de bord nutrition peau & cheveux', p1f5:'Sync wearable (Apple Health, Fitbit)', p1f6:'Coach IA 24h/24 — Avo', p1f7:'Sessions spécialistes en direct (mise à niveau)', pl1Btn:'Démarrer l\'essai gratuit de 14 jours', pl1Annual:'Ou 89,99$/an — économisez 25%',
+    pl2Name:'Premium Plus', pl2Per:'/ mois', pl2Tag:'Tout Premium + accès spécialistes en direct',
+    p2f1:'Toutes les fonctionnalités Premium incluses', p2f2:'2 sessions vidéo/mois avec diététicien ou dermatologue', p2f3:'Protocole peau-alimentation & cheveux personnalisé', p2f4:'Upload & interprétation de résultats d\'analyses', p2f5:'Réponses IA prioritaires le jour même', p2f6:'Recommandations de compléments alimentaires', pl2Btn:'Démarrer l\'essai gratuit de 14 jours', pl2Annual:'Ou 179,99$/an — économisez 25%',
+    pl3Name:'Bien-être entreprise', pl3Per:'/ par siège', pl3Tag:'Pour les RH — marque blanche, conforme HIPAA/PIPEDA',
+    p3f1:'Tout Premium Plus pour chaque employé', p3f2:'Tableau de bord RH + analyses anonymisées', p3f3:'Rapports ROI bien-être trimestriels', p3f4:'Responsable de compte dédié', p3f5:'Pilote gratuit 30 jours pour équipes 50+', pl3Btn:'Demander une démo',
+    peTitle:'Pour qui est NutriAI', peSub:'Segmentation pilotée par IA — chaque persona bénéficie d\'une expérience entièrement personnalisée',
+    segBadge:'Stratégie de segmentation IA', segTitle:'Comment NutriAI cible chaque segment', segDesc:'L\'IA génère 20+ variantes publicitaires par persona chaque jour. Chaque utilisateur reçoit un flux de contenu et une recommandation de spécialiste distincts — automatiquement.',
+    spTitle:'Notre réseau de spécialistes', spSub:'De vrais experts derrière l\'IA. Chaque plan Premium Plus vous connecte avec des professionnels certifiés.',
+    sp1n:'Diététiciens-nutritionnistes', sp1r:'Ancre clinique principale — 2 sessions live/mois en Premium Plus', sp1t1:'Gestion du poids', sp1t2:'Planification repas', sp1t3:'Nutrition sportive',
+    sp2n:'Dermatologues-nutritionnistes', sp2r:'Spécialistes du module peau & cheveux', sp2t1:'Protocoles acné', sp2t2:'Régime eczéma', sp2t3:'Repas anti-âge',
+    sp3n:'Endocrinologues', sp3r:'Diabète, thyroïde, SOPK, nutrition hormonale', sp3t1:'Compagnon GLP-1', sp3t2:'Nutrition SOPK', sp3t3:'Plans glycémiques',
+    sp4n:'Trichologues', sp4r:'Spécialistes certifiés du cuir chevelu et de la restauration capillaire', sp4t1:'Protocoles alopécie', sp4t2:'Chute post-partum', sp4t3:'Santé du cuir chevelu',
+    sp5n:'Diététiciens sportifs', sp5r:'Performance, récupération et composition corporelle', sp5t1:'Prise de muscle', sp5t2:'Alimentation endurance', sp5t3:'Repas de récupération',
+    sp6n:'Nutritionnistes périnatales', sp6r:'Grossesse, récupération post-partum et ménopause', sp6t1:'Plans prénataux', sp6t2:'Régime post-partum', sp6t3:'Nutrition ménopause',
+    collabBadge:'Modèle de partenariat', collabTitle:'Comment les spécialistes gagnent avec NutriAI', collabDesc:'Les spécialistes rejoignent gratuitement. Ils gagnent 30% de commission sur chaque abonnement Premium Plus qu\'ils réfèrent. NutriAI fournit la plateforme, la planification et les paiements.',
+    chatName:'Avo — Coach NutriAI', chatSub:'Nutritionniste IA · Expert peau & cheveux · Toujours disponible',
+    chatWelcome:'Bonjour ! Je suis <strong>Avo</strong> 🥑 — votre coach NutriAI !<br><br>Je peux vous aider avec des idées de repas, la nutrition de la peau & des cheveux, vos objectifs caloriques, les conseils de spécialistes et plus. Que puis-je faire pour vous ?',
+    chatPlaceholder:'Posez une question à Avo sur la nutrition…',
+    apiNote:'Propulsé par Claude AI · Vos données restent privées',
+    quickBtns:['Que manger aujourd\'hui ?','Aliments pour une peau éclatante','Repas végans riches en protéines','Aider à perdre du poids','Conseils nutrition pour les cheveux','Qu\'est-ce que mon plan ?'],
+    chatErr:'Oups — j\'ai eu un petit problème de connexion. Réessayez ! 🥑',
+    chatThinking:'Avo réfléchit…',
+    personas:[
+      {name:'Jordan Lee',tag:'28 · Fan de fitness · Vancouver, CB',emoji:'🏋️',bg:'#E8F5E9',goal:'Construire du muscle maigre & optimiser les macros',pain:'Pas le temps de suivre les macros manuellement',hook:'"Photographiez votre repas, atteignez vos macros — en 3 secondes."',channel:'TikTok · Influenceurs fitness · Strava',plan:'Premium — sync wearable + suivi macros'},
+      {name:'Sarah & Mike P.',tag:'34 · Nouveaux parents · North Vancouver',emoji:'👶',bg:'#FFF8E1',goal:'Repas sains en famille en moins de 30 min',pain:'Bébé = chaos — pas le temps de cuisiner',hook:'"Des plans repas en 5 minutes que toute la famille adorera."',channel:'Instagram · Blogs parents · Groupes Facebook',plan:'Premium — plans repas familiaux'},
+      {name:'Éléonore Wong',tag:'67 · Senior · Richmond, CB',emoji:'🩺',bg:'#E3F2FD',goal:'Gérer le diabète de type 2 par l\'alimentation',pain:'Conseils nutritionnels contradictoires',hook:'"Votre diététicien personnel, toujours disponible."',channel:'Facebook · Médecins généralistes · Centres communautaires',plan:'Premium Plus — sessions endocrinologue'},
+      {name:'Priya Sharma',tag:'31 · SOPK · Surrey, CB',emoji:'🌸',bg:'#FCE4EC',goal:'Équilibre hormonal & peau nette',pain:'Le régime SOPK est complexe et contradictoire',hook:'"Une alimentation qui travaille avec vos hormones, pas contre."',channel:'Instagram · Forums SOPK · Créateurs diététiciens',plan:'Premium Plus — dermatologue + endocrinologue'},
+      {name:'Marcus Thompson',tag:'45 · Cadre · Toronto, ON',emoji:'💼',bg:'#F3E5F5',goal:'Réduire l\'alimentation émotionnelle & booster l\'énergie',pain:'Voyages constants, aucune routine stable',hook:'"Votre coach nutrition qui voyage avec vous."',channel:'LinkedIn · Podcasts · Publicités aéroport',plan:'Bien-être entreprise — avantage salarié'}
+    ]
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lb').forEach(b => b.classList.toggle('on', b.textContent.trim() === l.toUpperCase()));
+  applyTranslations();
+  showPersona(currentPersona, document.querySelector('.ptab.on'));
+  initChat();
+}
+
+function t(k) { return T[lang][k] || T['en'][k] || ''; }
+
+function applyTranslations() {
+  const L = T[lang];
+  document.getElementById('hdr-sub').textContent = L.hdrSub;
+  const navIds = ['nt-home','nt-features','nt-beauty','nt-pricing','nt-personas','nt-specialists','nt-chat'];
+  navIds.forEach((id,i) => { const el=document.getElementById(id); if(el) el.textContent=L.nav[i]; });
+  const ids = {
+    'h-badge':'hBadge','h-title':'hTitle','h-desc':'hDesc','h-cta1':'hCta1','h-cta2':'hCta2',
+    'st1':'st1','st2':'st2','st3':'st3',
+    'h-how-title':'hHowTitle','h-how-sub':'hHowSub',
+    'hw1t':'hw1t','hw1d':'hw1d','hw2t':'hw2t','hw2d':'hw2d','hw3t':'hw3t','hw3d':'hw3d',
+    'h-diff-title':'hDiffTitle','h-diff-sub':'hDiffSub',
+    'd1':'d1','d2':'d2','d3':'d3','d4':'d4','d5':'d5',
+    'f-title':'fTitle','f-sub':'fSub',
+    'f1n':'f1n','f1d':'f1d','f2n':'f2n','f2d':'f2d','f3n':'f3n','f3d':'f3d','f4n':'f4n','f4d':'f4d',
+    'f5n':'f5n','f5d':'f5d','f6n':'f6n','f6d':'f6d','f7n':'f7n','f7d':'f7d','f8n':'f8n','f8d':'f8d',
+    'f-chat-title':'fChatTitle','f-chat-desc':'fChatDesc','f-chat-cta':'fChatCta',
+    'bh-title':'bhTitle','bh-sub':'bhSub','bt-skin':'btSkin','bt-hair':'btHair',
+    'sk-camp-badge':'skCampBadge','sk-camp-title':'skCampTitle','sk-camp-desc':'skCampDesc',
+    'hr-camp-badge':'hrCampBadge','hr-camp-title':'hrCampTitle','hr-camp-desc':'hrCampDesc',
+    'pr-title':'prTitle','pr-sub':'prSub','trial-txt':'trialTxt',
+    'pl0-name':'pl0Name','pl0-per':'pl0Per','pl0-tag':'pl0Tag',
+    'p0f1':'p0f1','p0f2':'p0f2','p0f3':'p0f3','p0f4':'p0f4','p0f5':'p0f5','p0f6':'p0f6','p0f7':'p0f7','pl0-btn':'pl0Btn',
+    'pop-tag':'popTag',
+    'pl1-name':'pl1Name','pl1-per':'pl1Per','pl1-tag':'pl1Tag',
+    'p1f1':'p1f1','p1f2':'p1f2','p1f3':'p1f3','p1f4':'p1f4','p1f5':'p1f5','p1f6':'p1f6','p1f7':'p1f7','pl1-btn':'pl1Btn','pl1-annual':'pl1Annual',
+    'pl2-name':'pl2Name','pl2-per':'pl2Per','pl2-tag':'pl2Tag',
+    'p2f1':'p2f1','p2f2':'p2f2','p2f3':'p2f3','p2f4':'p2f4','p2f5':'p2f5','p2f6':'p2f6','pl2-btn':'pl2Btn','pl2-annual':'pl2Annual',
+    'pl3-name':'pl3Name','pl3-per':'pl3Per','pl3-tag':'pl3Tag',
+    'p3f1':'p3f1','p3f2':'p3f2','p3f3':'p3f3','p3f4':'p3f4','p3f5':'p3f5','pl3-btn':'pl3Btn',
+    'pe-title':'peTitle','pe-sub':'peSub',
+    'seg-badge':'segBadge','seg-title':'segTitle','seg-desc':'segDesc',
+    'sp-title':'spTitle','sp-sub':'spSub',
+    'sp1n':'sp1n','sp1r':'sp1r','sp1t1':'sp1t1','sp1t2':'sp1t2','sp1t3':'sp1t3',
+    'sp2n':'sp2n','sp2r':'sp2r','sp2t1':'sp2t1','sp2t2':'sp2t2','sp2t3':'sp2t3',
+    'sp3n':'sp3n','sp3r':'sp3r','sp3t1':'sp3t1','sp3t2':'sp3t2','sp3t3':'sp3t3',
+    'sp4n':'sp4n','sp4r':'sp4r','sp4t1':'sp4t1','sp4t2':'sp4t2','sp4t3':'sp4t3',
+    'sp5n':'sp5n','sp5r':'sp5r','sp5t1':'sp5t1','sp5t2':'sp5t2','sp5t3':'sp5t3',
+    'sp6n':'sp6n','sp6r':'sp6r','sp6t1':'sp6t1','sp6t2':'sp6t2','sp6t3':'sp6t3',
+    'collab-badge':'collabBadge','collab-title':'collabTitle','collab-desc':'collabDesc',
+    'chat-name':'chatName','chat-sub':'chatSub','api-note':'apiNote'
+  };
+  Object.entries(ids).forEach(([id,key]) => {
+    const el = document.getElementById(id);
+    if (el && L[key] !== undefined) {
+      if (id === 'h-title') el.innerHTML = L[key];
+      else el.textContent = L[key];
+    }
+  });
+  // skin nutrient labels
+  const skinKeys = ['sk1n','sk1e','sk1s','sk2n','sk2e','sk2s','sk3n','sk3e','sk3s','sk4n','sk4e','sk4s','sk5n','sk5e','sk5s','sk6n','sk6e','sk6s'];
+  const hairKeys = ['hr1n','hr1e','hr1s','hr2n','hr2e','hr2s','hr3n','hr3e','hr3s','hr4n','hr4e','hr4s','hr5n','hr5e','hr5s','hr6n','hr6e','hr6s'];
+  [...skinKeys,...hairKeys].forEach(k => { const el=document.getElementById(k); if(el && L[k]) el.textContent=L[k]; });
+  // persona tab labels
+  const ptabs = document.querySelectorAll('.ptab');
+  L.personas.forEach((p,i) => { if(ptabs[i]) ptabs[i].textContent = p.name.split(' ')[0]; });
+  // chat placeholder
+  const inp = document.getElementById('chat-input');
+  if(inp) inp.placeholder = L.chatPlaceholder;
+}
+
+// ── BEAUTY TABS ──
+function showBeauty(tab) {
+  document.getElementById('beauty-skin').style.display = tab==='skin' ? 'block' : 'none';
+  document.getElementById('beauty-hair').style.display = tab==='hair' ? 'block' : 'none';
+  document.getElementById('stab-skin').className = 'stab' + (tab==='skin' ? ' on' : '');
+  document.getElementById('stab-hair').className = 'stab' + (tab==='hair' ? ' on' : '');
+  if(tab==='skin'){ document.getElementById('stab-skin').style.background='#D81B60';document.getElementById('stab-skin').style.color='#fff';document.getElementById('stab-hair').style.background='';document.getElementById('stab-hair').style.color=''; }
+  else { document.getElementById('stab-hair').style.background='#6A1B9A';document.getElementById('stab-hair').style.color='#fff';document.getElementById('stab-skin').style.background='';document.getElementById('stab-skin').style.color=''; }
+}
+
+// ── PERSONAS ──
+let currentPersona = 0;
+function showPersona(idx, btn) {
+  currentPersona = idx;
+  const p = T[lang].personas[idx];
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  document.getElementById('persona-display').innerHTML = `
+    <div class="persona-card">
+      <div class="p-top">
+        <div class="p-avatar" style="background:${p.bg}">${p.emoji}</div>
+        <div><div class="p-name">${p.name}</div><div class="p-tag">${p.tag}</div></div>
+      </div>
+      <div class="p-row"><div class="p-label">${lang==='fr'?'Objectif':'Goal'}</div><div class="p-val"><span class="goal-tag">${p.goal}</span></div></div>
+      <div class="p-row"><div class="p-label">${lang==='fr'?'Douleur':'Pain'}</div><div class="p-val"><span class="pain-tag">${p.pain}</span></div></div>
+      <div class="p-row"><div class="p-label">${lang==='fr'?'Canal':'Channel'}</div><div class="p-val">${p.channel}</div></div>
+      <div class="p-row"><div class="p-label">${lang==='fr'?'Plan':'Plan'}</div><div class="p-val">${p.plan}</div></div>
+      <div class="hook-box"><p>"${p.hook}"</p></div>
+    </div>`;
+}
+
+// ── CHAT ──
+let chatHistory = [];
+let chatBusy = false;
+let chatInited = false;
+
+function initChat() {
+  const msgs = document.getElementById('chat-msgs');
+  msgs.innerHTML = '';
+  chatHistory = [];
+  chatBusy = false;
+  appendAvoMsg(T[lang].chatWelcome);
+  // quick buttons
+  const qb = document.getElementById('quick-btns');
+  qb.innerHTML = '';
+  qb.style.display = 'flex';
+  T[lang].quickBtns.forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'qbtn';
+    btn.textContent = q;
+    btn.onclick = () => quickAsk(q);
+    qb.appendChild(btn);
+  });
+  chatInited = true;
+}
+
+function buildSystem() {
+  if(lang === 'fr') {
+    return `Tu es Avo, le coach nutritionnel IA de NutriAI — chaleureux, expert, et encourageant. Tu parles comme un ami expert en nutrition. Tu couvres : plans repas, macros & micronutriments, nutrition peau & cheveux, gestion du poids, régimes végans/culturels, compléments alimentaires, et bien-être général. Tes réponses sont concises (2-5 phrases ou une courte liste). Utilise des sauts de ligne. Utilise 🥑 avec parcimonie. Ne fais jamais de diagnostic médical. Réponds toujours en français.`;
+  }
+  return `You are Avo, NutriAI's friendly, expert AI nutrition coach. Speak like a knowledgeable friend — warm, encouraging, never preachy. Cover: meal planning, macros & micros, skin & hair nutrition, weight management, vegan/cultural diets, GLP-1 nutrition, supplements, and habit-building. Keep responses concise (2-5 sentences or a short list). Use line breaks. Occasionally use 🥑 sparingly. Never diagnose medical conditions — suggest seeing a doctor for serious health concerns. Always respond in English.`;
+}
+
+async function sendChat() {
+  if(chatBusy) return;
+  const inp = document.getElementById('chat-input');
+  const msg = inp.value.trim();
+  if(!msg) return;
+  inp.value = '';
+  autoResize(inp);
+  appendUserMsg(msg);
+  chatHistory.push({role:'user', content: msg});
+  document.getElementById('quick-btns').style.display = 'none';
+  chatBusy = true;
+  document.getElementById('send-btn').disabled = true;
+  document.getElementById('api-note').textContent = T[lang].chatThinking;
+  const typingId = appendTyping();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: buildSystem(),
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    removeEl(typingId);
+    const reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : T[lang].chatErr;
+    appendAvoMsg(reply);
+    chatHistory.push({role:'assistant', content: reply});
+    document.getElementById('api-note').textContent = T[lang].apiNote;
+  } catch(e) {
+    removeEl(typingId);
+    appendAvoMsg(T[lang].chatErr);
+    document.getElementById('api-note').textContent = T[lang].apiNote;
+  }
+  chatBusy = false;
+  document.getElementById('send-btn').disabled = false;
+}
+
+function appendUserMsg(text) {
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'cmsg user';
+  d.innerHTML = `<div class="c-bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function appendAvoMsg(text) {
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'cmsg avo';
+  const avoSvg = `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="46" rx="27" ry="32" fill="#4CAF50"/><ellipse cx="40" cy="52" rx="17" ry="20" fill="#F5CBA7"/><ellipse cx="40" cy="56" rx="9" ry="11" fill="#6D4C41"/><circle cx="32" cy="39" r="4" fill="white"/><circle cx="48" cy="39" r="4" fill="white"/><circle cx="33" cy="40" r="2" fill="#1A1A1A"/><circle cx="49" cy="40" r="2" fill="#1A1A1A"/><path d="M33 50 Q40 57 47 50" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="10" rx="7" ry="4.5" fill="#388E3C" transform="rotate(-10,40,10)"/><line x1="40" y1="6" x2="40" y2="16" stroke="#4E342E" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+  const formatted = text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  d.innerHTML = `<div class="c-av">${avoSvg}</div><div class="c-bubble">${formatted}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function appendTyping() {
+  const msgs = document.getElementById('chat-msgs');
+  const id = 'ty-' + Date.now();
+  const avoSvg = `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><ellipse cx="40" cy="46" rx="27" ry="32" fill="#4CAF50"/><ellipse cx="40" cy="52" rx="17" ry="20" fill="#F5CBA7"/><ellipse cx="40" cy="56" rx="9" ry="11" fill="#6D4C41"/><circle cx="32" cy="39" r="4" fill="white"/><circle cx="48" cy="39" r="4" fill="white"/><circle cx="33" cy="40" r="2" fill="#1A1A1A"/><circle cx="49" cy="40" r="2" fill="#1A1A1A"/><path d="M33 50 Q40 57 47 50" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="10" rx="7" ry="4.5" fill="#388E3C" transform="rotate(-10,40,10)"/><line x1="40" y1="6" x2="40" y2="16" stroke="#4E342E" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+  const d = document.createElement('div');
+  d.className = 'cmsg avo'; d.id = id;
+  d.innerHTML = `<div class="c-av">${avoSvg}</div><div class="c-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+  return id;
+}
+
+function removeEl(id) { const el=document.getElementById(id); if(el) el.remove(); }
+
+function quickAsk(q) {
+  document.getElementById('chat-input').value = q;
+  sendChat();
+}
+
+function chatKey(e) { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChat(); } }
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ── NAVIGATE ──
+function go(id) {
+  document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(n => n.classList.remove('on'));
+  document.getElementById('scr-'+id).classList.add('on');
+  document.getElementById('nt-'+id).classList.add('on');
+  if(id === 'chat' && !chatInited) initChat();
+}
+
+// ── INIT ──
+applyTranslations();
+showPersona(0, document.querySelector('.ptab'));
+</script>
+</body>
+</html>
